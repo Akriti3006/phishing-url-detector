@@ -1,0 +1,15 @@
+# Virtual environment and Python cache
+venv/
+__pycache__/
+*.pyc
+
+# Trained model (162 MB, over GitHub's 100 MB limit; recreate with python train.py)
+model.joblib
+
+# Large data files (add download instructions to the README instead)
+dataset.csv
+top_domains.csv
+
+# Secrets and editor settings
+.env
+.vscode/

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Phishing URL Detector</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 640px; margin: 80px auto; text-align: center; }
+    input { width: 80%; padding: 10px; font-size: 16px; }
+    button { padding: 10px 24px; font-size: 16px; margin-top: 12px; cursor: pointer; }
+    #result { margin-top: 24px; font-size: 20px; font-weight: bold; }
+    #meta { margin-top: 8px; font-size: 14px; color: #666; }
+  </style>
+</head>
+<body>
+  <h2>Phishing URL Detector</h2>
+  <input id="url" placeholder="Enter a URL to check" onkeydown="if(event.key==='Enter') check()">
+  <br>
+  <button onclick="check()">CHECK URL</button>
+  <p style="margin-top:30px"><a href="/history">View scan history</a></p>
+  <div id="result"></div>
+  <div id="meta"></div>
+
+  <script>
+    async function check() {
+      const url = document.getElementById("url").value;
+      const out = document.getElementById("result");
+      const meta = document.getElementById("meta");
+      out.textContent = "Checking...";
+      meta.textContent = "";
+      try {
+        const res = await fetch("/predict", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({url})
+        });
+        const data = await res.json();
+        if (data.error) { out.style.color = "black"; out.textContent = data.error; return; }
+        const bad = data.prediction === "Phishing";
+        out.style.color = bad ? "crimson" : "green";
+        out.textContent = (bad ? "⚠️ POTENTIAL PHISHING URL" : "✅ LEGITIMATE URL")
+                          + " (Confidence: " + data.confidence + "%)";
+        meta.textContent = "Model: " + data.model + " | "
+                           + (data.saved_to_db ? "Saved to database (scan #" + data.scan_id + ")"
+                                               : "Not saved to database");
+      } catch (e) {
+        out.style.color = "black";
+        out.textContent = "Could not reach the server.";
+      }
+    }
+  </script>
+</body>
+</html>

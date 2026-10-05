@@ -1,0 +1,6 @@
+pandas
+scikit-learn
+joblib
+flask
+mysql-connector-python
+xgboost

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scan History - Phishing URL Detector</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 30px auto; padding: 0 15px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 25px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; word-break: break-all; }
+    th { background: #f0f0f0; }
+    .Phishing { color: crimson; font-weight: bold; }
+    .Legitimate { color: green; font-weight: bold; }
+    .error { color: crimson; }
+  </style>
+</head>
+<body>
+  <h1>Scan History</h1>
+  <p><a href="/">&larr; Back to checker</a></p>
+
+  {% if error %}
+  <p class="error">Database error: {{ error }}</p>
+  {% endif %}
+
+  <h2>Summary</h2>
+  <p>Total URLs checked: <strong>{{ total }}</strong></p>
+  <table>
+    <tr><th>Result</th><th>Count</th><th>Avg confidence (%)</th></tr>
+    {% for r in by_label %}
+    <tr>
+      <td class="{{ r.prediction }}">{{ r.prediction }}</td>
+      <td>{{ r.count }}</td>
+      <td>{{ r.avg_confidence }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3">No scans yet.</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>Last 10 scans</h2>
+  <table>
+    <tr><th>ID</th><th>URL</th><th>Result</th><th>Confidence (%)</th><th>Time</th></tr>
+    {% for r in recent %}
+    <tr>
+      <td>{{ r.scan_id }}</td>
+      <td>{{ r.url }}</td>
+      <td class="{{ r.prediction }}">{{ r.prediction }}</td>
+      <td>{{ r.confidence }}</td>
+      <td>{{ r.scanned_at }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No scans yet.</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
